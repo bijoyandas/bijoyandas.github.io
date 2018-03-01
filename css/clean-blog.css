@@ -288,10 +288,27 @@ header.masthead .post-heading .meta a {
   margin-bottom: 10px;
 }
 
+.post-title {
+  font-size: 30px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
 .post-preview > .post-title {
   font-size: 30px;
   margin-top: 30px;
   margin-bottom: 10px;
+}
+
+.post-title {
+  font-size: 30px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.post-subtitle {
+  font-weight: 300;
+  margin: 0 0 10px;
 }
 
 .post-preview > a > .post-subtitle {
@@ -299,10 +316,12 @@ header.masthead .post-heading .meta a {
   margin: 0 0 10px;
 }
 
+
 .post-preview > .post-subtitle {
   font-weight: 300;
   margin: 0 0 10px;
 }
+
 
 .post-preview > .post-meta {
   font-size: 18px;
