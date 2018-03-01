@@ -78,7 +78,7 @@
               <b>Click on the canvas below to start the game</b>
             </h6>
             <hr />
-            <canvas id="ctx" height="500" width="500" style="border:1px solid #000000"></canvas>
+            <canvas id="ctx" height="500" width="500" style="border:1px solid #000000" tabindex=0></canvas>
             <hr />
             <h6 style="font-size:20px;font-weight:100">Repository: <a href="https://github.com/bijoyandas/Agar-Survivor" style="text-decoration:None">Click Here</a></h6>
           </div>
@@ -183,6 +183,7 @@ Bullet = function(id,x,y,spdX,spdY,width,height)
 }
 
 document.onkeydown = function(event) {
+  event.preventDefault();
 	if(event.keyCode === 68) //d
 		player.pressingRight = true;
 	else if(event.keyCode === 83) //s
@@ -224,6 +225,7 @@ document.onkeydown = function(event) {
 }
 
 document.onkeyup = function(event) {
+  event.preventDefault();
 	if(event.keyCode === 68) //d
 		player.pressingRight = false;
 	else if(event.keyCode === 83) //s

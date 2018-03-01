@@ -108,6 +108,7 @@ var ball = {
 var enemyList = {};
 document.onkeydown = function(event)
 {
+  event.preventDefault();
 	if (event.keyCode === 37) {
 		player.pressingLeft = true;
 	}
@@ -129,6 +130,7 @@ Enemy = function(width,height,x,y)
 }
 document.onkeyup = function(event)
 {
+  event.preventDefault();
 	if (event.keyCode === 37)
 		player.pressingLeft = false;
 	else if (event.keyCode == 39)

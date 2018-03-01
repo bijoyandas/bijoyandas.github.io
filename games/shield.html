@@ -143,6 +143,7 @@
       };
       document.onkeydown = function(event)
       {
+        event.preventDefault();
       	if (event.keyCode == 65)
       		player1.pressingLeft = true;
       	else if (event.keyCode == 68)
@@ -154,6 +155,7 @@
       }
       document.onkeyup = function(event)
       {
+        event.preventDefault();
       	if (event.keyCode == 65)
       		player1.pressingLeft = false;
       	else if (event.keyCode == 68)
