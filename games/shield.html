@@ -1,0 +1,427 @@
+<html lang="eng">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CodeStacK - A project blog by Bijoyan Das">
+  <meta name="author" content="Bijoyan Das">
+
+  <title>CodeStacK - A Project blog by Bijoyan Das</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="../css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">CodeStacK</a>
+          <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="../index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="docs/bijoyan_resume.pdf">Resume</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Page Header -->
+      <header class="masthead" style="background-image: url('../img/home-bg.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+              <div class="site-heading">
+                <h1>Shield</h1>
+                <span class="subheading">A Two player defence game</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12" style="text-align:center">
+            <h6 style="font-size:20px;font-weight:100;"><b>Instructions:</b> <br />For Player Green: Press Left (&larr;) and right (&rarr;) arrow keys to control the shield
+              <br />For Player Orange: Press 'A' and 'D' to control the shield<br />
+            <b>Click on the canvas below to start the game</b>
+            </h6>
+            <hr />
+            <canvas id="ctx" height="600" width="500" style="border:1px solid #000000"></canvas>
+            <hr />
+            <h6 style="font-size:20px;font-weight:100">Repository: <a href="https://github.com/bijoyandas/Shield---A-JavaScript-Game" style="text-decoration:None">Click Here</a></h6>
+          </div>
+        </div>
+      </div>
+
+      <script type="text/javascript">
+      var HEIGHT = 600;
+      var WIDTH = 500;
+      var canvas = document.getElementById("ctx");
+      var ctx = canvas.getContext('2d');
+      var cityList1 = {};
+      var cityList2 = {};
+      var numCity1 = 0;
+      var numCity2 = 0;
+      var player1 = {};
+      var player2 = {};
+      var playerIncX = 5;
+      var score1 = 0;
+      var score2 = 0;
+      var frames = 0;
+      ctx.font = "30px Arial";
+      createCity = function(id,x,y,width,height,color,choose)
+      {
+      	var city = {};
+      	city.x = x;
+      	city.y = y;
+      	city.id = id;
+      	city.width = width;
+      	city.height = height;
+      	city.color = color;
+      	if (choose == 1)
+      		cityList1[id] = city;
+      	else
+      		cityList2[id] = city;
+      }
+      createPlayer = function(id,x,y,width,height,color,choose)
+      {
+      	if (choose == 1) {
+      	player1.id = id;
+      	player1.x = x;
+      	player1.y = y;
+      	player1.width = width;
+      	player1.height = height;
+      	player1.color = color;
+      	player1.pressingLeft = false;
+      	player1.pressingRight = false;
+      	}
+      	else {
+      	player2.id = id;
+      	player2.x = x;
+      	player2.y = y;
+      	player2.width = width;
+      	player2.height = height;
+      	player2.color = color;
+      	player2.pressingLeft = false;
+      	player2.pressingRight = false;
+      	}
+      }
+      var Ball = {
+      	width:10,
+      	height:10,
+      	spdX:3,
+      	spdY:3,
+      	color:'blue',
+      	x:250,
+      	y:300
+      };
+      document.onkeydown = function(event)
+      {
+      	if (event.keyCode == 65)
+      		player1.pressingLeft = true;
+      	else if (event.keyCode == 68)
+      		player1.pressingRight = true;
+      	if (event.keyCode == 37)
+      		player2.pressingLeft = true;
+      	else if (event.keyCode == 39)
+      		player2.pressingRight = true;
+      }
+      document.onkeyup = function(event)
+      {
+      	if (event.keyCode == 65)
+      		player1.pressingLeft = false;
+      	else if (event.keyCode == 68)
+      		player1.pressingRight = false;
+      	if (event.keyCode == 37)
+      		player2.pressingLeft = false;
+      	else if (event.keyCode == 39)
+      		player2.pressingRight = false;
+      }
+      testCollisionRect = function(rect1,rect2)
+      {
+      	return ((rect1.x <= rect2.x + rect2.width)
+      			&& (rect2.x <= rect1.x + rect1.width)
+      			&& (rect1.y <= rect2.y + rect2.height)
+      			&& (rect2.y <= rect1.y + rect1.height));
+      }
+      testCollisionEntity = function(entity1,entity2) {
+      	var rect1 = {};
+      		rect1.x=entity1.x;
+      		rect1.y=entity1.y;
+      		rect1.width=entity1.width;
+      		rect1.height=entity1.height;
+      	var rect2 = {};
+      		rect2.x=entity2.x-entity2.width/2;
+      		rect2.y=entity2.y-entity2.height/2;
+      		rect2.width=entity2.width;
+      		rect2.height=entity2.height;
+      		return testCollisionRect(rect1,rect2);
+      }
+      drawCity = function(something)
+      {
+      	ctx.save();
+      	ctx.fillStyle = something.color;
+      	ctx.fillRect(something.x,something.y,something.width,something.height);
+      	ctx.restore();
+      }
+      drawPlayer = function(something)
+      {
+      	ctx.save();
+      	ctx.fillStyle = something.color;
+      	ctx.fillRect(something.x,something.y,something.width,something.height);
+      	ctx.restore();
+      }
+      updatePlayerPosition = function(something)
+      {
+      	if (something.pressingLeft)
+      		something.x -= playerIncX;
+      	if (something.pressingRight)
+      		something.x += playerIncX;
+      	if (something.x > WIDTH - something.width)
+      		something.x = WIDTH - something.width;
+      	if (something.x < 0)
+      		something.x = 0;
+      }
+      updatePlayer = function(something)
+      {
+      	updatePlayerPosition(something);
+      	drawPlayer(something);
+      }
+      drawBall = function(something)
+      {
+      	ctx.save();
+      	ctx.fillStyle = something.color;
+      	ctx.fillRect(something.x,something.y,something.width,something.height);
+      	ctx.restore();
+      }
+      updateBallPosition = function(something)
+      {
+      	something.x += something.spdX;
+      	something.y += something.spdY;
+      	if (something.x < 0 || something.x > WIDTH)
+      		something.spdX = -something.spdX;
+      	if (something.y < 0 || something.y > HEIGHT)
+      		something.spdY = -something.spdY;
+      }
+      updateBall = function(something)
+      {
+      	updateBallPosition(something);
+      	drawBall(something);
+      }
+      update = function()
+      {
+      	ctx.clearRect(0,0,WIDTH,HEIGHT);
+      	frames++;
+      	updateBall(Ball);
+      	updatePlayer(player2);
+      	updatePlayer(player1);
+      	for(var key in cityList1)
+      	{
+      		drawCity(cityList1[key]);
+      	}
+      	for(var key in cityList2)
+      	{
+      		drawCity(cityList2[key]);
+      	}
+      	var isCollision = testCollisionEntity(player1,Ball);
+      	if (isCollision)
+      	{
+      		Ball.spdY = -Ball.spdY;
+      	}
+      	var isCollision = testCollisionEntity(player2,Ball);
+      	if (isCollision)
+      	{
+      		Ball.spdY = -Ball.spdY;
+      	}
+      	for(var key in cityList1)
+      	{
+      		var isColl = testCollisionEntity(cityList1[key],Ball);
+      		if (isColl)
+      		{
+      			delete cityList1[key];
+      			score1 += 5;
+      			Ball.spdY = -Ball.spdY;
+      		}
+      	}
+      	for(var key in cityList2)
+      	{
+      		var isColl = testCollisionEntity(cityList2[key],Ball);
+      		if (isColl)
+      		{
+      			delete cityList2[key];
+      			score2 += 5;
+      			Ball.spdY = -Ball.spdY;
+      		}
+      	}
+      	if (score1 == 100 || score2 == 100)
+      		gameOver();
+      }
+      dynamicBall = function()
+      {
+      	var check = Math.random();
+      	if (check > 0 && check <=0.3) {
+      	Ball.spdX = -Ball.spdX;
+      	}
+      	else if (check >0.6 && check <=0.8)
+      	{
+      		Ball.spdY = -Ball.spdY;
+      	}
+      }
+      startNewGame = function()
+      {
+      	cityList1 = {};
+      	cityList2 = {};
+      	var width = 48;
+      	var height = 30;
+      	var x = 1;
+      	var y = 2;
+      	numCity1 = 0;
+      	numCity2 = 0;
+      	Ball.x = 250;
+      	Ball.y = 350;
+      	Ball.spdX = 3;
+      	Ball.spdY = 3;
+      	var cityColor1 = "orange";
+      	var cityColor2 = "green";
+      	for(var i=1;i<=20;i++)
+      	{
+      		if ((i%10 == 1) && i != 1)
+      		{
+      			y = y + height + 2;
+      			x = 1;
+      		}
+      		createCity(numCity1++, x, y, width, height, cityColor1, 1);
+      		x=x+width+2;
+      	}
+      	x = 1;
+      	y = 536;
+      	for(var i=1;i<=20;i++,x+=width+2)
+      	{
+      		if ((i%10 == 1) && i != 1)
+      		{
+      			y = y + height + 2;
+      			x = 1;
+      		}
+      		createCity(numCity2++, x, y, width, height, cityColor2, 2);
+      	}
+      	for(var key in cityList1)
+      	{
+      		drawCity(cityList1[key]);
+      	}
+      	for(var key in cityList2)
+      	{
+      		drawCity(cityList2[key]);
+      	}
+      	createPlayer(1,0,70,60,15,"orange",1);
+      	createPlayer(2,0,515,60,15,"green",2);
+      	drawPlayer(player1);
+      	drawPlayer(player2);
+      	score1 = 0;
+      	score2 = 0;
+      	frames = 0;
+      }
+      gameOver = function()
+      {
+      	if (score1 == 100) {
+      		console.log("Green wins!");
+      	}
+      	if (score2 == 100) {
+      		console.log("Orange wins!");
+      	}
+      	startNewGame();
+      }
+      var running = false;
+      var intervalVar1;
+      var intervalVar2;
+      document.getElementById("ctx").onmousedown = function(e) {
+        if (running) {
+          clearInterval(intervalVar1);
+          clearInterval(intervalVar2);
+          running = false;
+        }
+        startNewGame();
+        running = true;
+        intervalVar1 = setInterval(update,10); //40 frames per second
+        intervalVar2 = setInterval(dynamicBall,1000);
+      }
+      </script>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <ul class="list-inline text-center">
+          <li class="list-inline-item">
+            <a href="https://www.twitter.com/bijoyandas" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a href="https://www.facebook.com/bijoyan.das" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a href="https://github.com/bijoyandas" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a href="https://www.quora.com/profile/Bijoyan-Das" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-quora fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <p class="copyright text-muted">Copyright &copy; CodeStacK 2018</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom scripts for this template -->
+<script src="../js/clean-blog.min.js"></script>
+</body>
+</html>

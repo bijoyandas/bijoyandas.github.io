@@ -1,0 +1,504 @@
+<html lang="eng">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CodeStacK - A project blog by Bijoyan Das">
+  <meta name="author" content="Bijoyan Das">
+
+  <title>CodeStacK - A Project blog by Bijoyan Das</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="../css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">CodeStacK</a>
+          <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="../index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="docs/bijoyan_resume.pdf">Resume</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Page Header -->
+      <header class="masthead" style="background-image: url('../img/home-bg.jpg')">
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+              <div class="site-heading">
+                <h1>Agar Survivor</h1>
+                <span class="subheading">A Javascript Survival Game</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12" style="text-align:center">
+            <h6 style="font-size:20px;font-weight:100"><b>Instructions:</b><br />
+              Press 'W' to move 'Up' <br />
+              Press 'A' to move 'Left' <br />
+              Press 'S' to move 'Down' <br />
+              Press 'D' to move 'Right' <br />
+              Press arrow keys (&larr; &rarr; &uarr; &darr;) to fire bullets <br />
+              Press 'Space bar' for burst fire (When score >= 500) <br />
+              Eat food and powerups to get powerful.<br />
+              <b>Click on the canvas below to start the game</b>
+            </h6>
+            <hr />
+            <canvas id="ctx" height="500" width="500" style="border:1px solid #000000"></canvas>
+            <hr />
+            <h6 style="font-size:20px;font-weight:100">Repository: <a href="https://github.com/bijoyandas/Agar-Survivor" style="text-decoration:None">Click Here</a></h6>
+          </div>
+        </div>
+      </div>
+
+      <script>
+var ctx = document.getElementById("ctx").getContext("2d");
+ctx.font = '30px Arial';
+var HEIGHT = 500;
+var WIDTH = 500;
+var frameCount = 0;
+var score = 0;
+var brthCount = 0;
+var Time = 0;
+var bestTime = 0;
+var timeWhenGameStarted = Date.now(); //return the time in milliseconds
+//Player
+var player = {
+        x:50,
+        spdX:30,
+        y:40,
+        spdY:5,
+        name:'P',
+        hp:10,
+		width:20,
+		height:20,
+		color:'green',
+		atkspd:1,
+		counter:0,
+		pressingDown:false,
+		pressingUp:false,
+		pressingLeft:false,
+		pressingRight:false,
+};
+var enemyList = {};
+var upgradeList = {};
+var bulletList = {};
+testCollisionRect = function(rect1,rect2){       //return if colliding (true/false)
+        return ((rect1.x <= rect2.x + rect2.width)
+			&& (rect2.x <= rect1.x + rect1.width)
+			&& (rect1.y <= rect2.y + rect2.height)
+			&& (rect2.y <= rect1.y + rect1.height));
+}
+testCollisionEntity = function(entity1,entity2) {
+	var rect1 = {};
+		rect1.x=entity1.x;
+		rect1.y=entity1.y;
+		rect1.width=entity1.width;
+		rect1.height=entity1.height;
+	var rect2 = {};
+		rect2.x=entity2.x-entity2.width/2;
+		rect2.y=entity2.y-entity2.height/2;
+		rect2.width=entity2.width;
+		rect2.height=entity2.height;
+	return testCollisionRect(rect1,rect2);
+}
+
+Enemy = function(id,x,y,spdX,spdY,width,height)
+{
+	var enemy = {};
+	enemy.x = x;
+	enemy.spdX = spdX;
+	enemy.y = y;
+	enemy.spdY = spdY;
+	enemy.name = 'E';
+	enemy.id = id;
+	enemy.width = width;
+	enemy.height = height;
+	enemy.color = 'red';
+	enemyList[id] = enemy;
+}
+Upgrade = function(id,x,y,spdX,spdY,width,height,category,color)
+{
+	var upgrade = {};
+	upgrade.x = x;
+	upgrade.spdX = spdX;
+	upgrade.y = y;
+	upgrade.spdY = spdY;
+	upgrade.name = 'E';
+	upgrade.id = id;
+	upgrade.width = width;
+	upgrade.height = height;
+	upgrade.color = color;
+	upgrade.category = category;
+	upgradeList[id] = upgrade;
+}
+Bullet = function(id,x,y,spdX,spdY,width,height)
+{
+	var bullet = {};
+	bullet.x = x;
+	bullet.spdX = spdX;
+	bullet.y = y;
+	bullet.spdY = spdY;
+	bullet.name = 'E';
+	bullet.id = id;
+	bullet.width = width;
+	bullet.height = height;
+	bullet.color = 'black';
+	bullet.timer = 0;
+	bulletList[id] = bullet;
+}
+
+document.onkeydown = function(event) {
+	if(event.keyCode === 68) //d
+		player.pressingRight = true;
+	else if(event.keyCode === 83) //s
+		player.pressingDown = true;
+	else if(event.keyCode === 65) //a
+		player.pressingLeft = true;
+	else if(event.keyCode === 87) //w
+		player.pressingUp = true;
+	else if (event.keyCode === 32) {//Space
+		if (score >= 500) {
+			randomelyGenerateBlast();
+			score -= 500;
+		}
+	}
+	else if (event.keyCode === 38) {
+		if (player.counter > 25) {
+			randomelyGenerateBullet(270);
+			player.counter = 0;
+		}
+	}
+	else if (event.keyCode === 40) {
+		if (player.counter > 25) {
+			randomelyGenerateBullet(90);
+			player.counter = 0;
+		}
+	}
+	else if (event.keyCode === 37) {
+		if (player.counter > 25) {
+			randomelyGenerateBullet(180);
+			player.counter = 0;
+		}
+	}
+	else if (event.keyCode === 39) {
+		if (player.counter > 25) {
+			randomelyGenerateBullet(0);
+			player.counter = 0;
+		}
+	}
+}
+
+document.onkeyup = function(event) {
+	if(event.keyCode === 68) //d
+		player.pressingRight = false;
+	else if(event.keyCode === 83) //s
+		player.pressingDown = false;
+	else if(event.keyCode === 65) //a
+		player.pressingLeft = false;
+	else if(event.keyCode === 87) //w
+		player.pressingUp = false;
+}
+updatePlayerPosition = function(){
+	if(player.pressingRight)
+		player.x += 10;
+	if(player.pressingLeft)
+		player.x -= 10;
+	if(player.pressingUp)
+		player.y -= 10;
+	if(player.pressingDown)
+		player.y += 10;
+
+	if (player.x < player.width/2)
+		player.x = player.width/2;
+	if (player.x > WIDTH - player.width/2)
+		player.x = WIDTH - player.width/2;
+	if (player.y < 0)
+		player.y = 0;
+	if (player.y > HEIGHT - player.height + 2)
+		player.y = HEIGHT - player.height + 2;
+}
+updateEntity = function(something)
+{
+	//enemy
+	updateEntityPosition(something);
+	drawEntity(something);
+}
+updateEntityPosition = function(something)
+{
+	something.x += something.spdX;
+	something.y += something.spdY;
+	if (something.x > WIDTH || something.x < 0)
+	{
+		something.spdX = -something.spdX;
+	}
+	if (something.y > HEIGHT || something.y < 0)
+	{
+		something.spdY = -something.spdY;
+	}
+}
+drawEntity = function(something) {
+	ctx.save();
+	ctx.fillStyle = something.color;
+	ctx.fillRect(something.x-something.width/2,something.y-something.height/20,something.width,something.height);
+	ctx.restore();
+}
+
+counter = 0;
+update = function()
+{
+	ctx.clearRect(0,0,WIDTH,HEIGHT);
+	frameCount++;
+	if (frameCount % 10 === 0)
+		score++;
+	if (frameCount % 50 === 0) {
+		for(var i=1;i<=brthCount;i++)
+		{
+			randomelyGenerateEnemy();
+		}
+	}
+	if (frameCount % 25 === 0) {
+			randomelyGenerateUpgrade();
+			Time++;
+		}
+	if (Time % 15 === 0 && frameCount % 25 === 0 )
+	{
+		brthCount++;
+	}
+	player.counter += player.atkspd;
+	for(var key in bulletList)
+	{
+		updateEntity(bulletList[key]);
+		var toRemove = false;
+		bulletList[key].timer++;
+		if(bulletList[key].timer > 100) {
+			toRemove = true;
+		}
+		for(var key2 in enemyList) {
+			var isColliding = testCollisionEntity(enemyList[key2],bulletList[key]);
+			if (isColliding)
+			{
+				toRemove = true;
+				delete enemyList[key2];
+				break;
+			}
+		}
+		if(toRemove)
+			delete bulletList[key];
+	}
+	for(var key in upgradeList)
+	{
+		updateEntity(upgradeList[key]);
+		var isColliding = testCollisionEntity(player,upgradeList[key]);
+		if (isColliding)
+		{
+			if (upgradeList[key].category === 'score')
+				score += 100;
+			if (upgradeList[key].category === 'atkspd')
+				player.atkspd += 1;
+			delete upgradeList[key];
+		}
+	}
+	for(var key in enemyList)
+	{
+		updateEntity(enemyList[key]);
+		var isColliding = testCollisionEntity(player,enemyList[key]);
+		if (isColliding)
+		{
+			enemyList[key].spdX = -enemyList[key].spdX;
+			enemyList[key].spdY = -enemyList[key].spdY;
+			player.hp -= 1;
+		}
+	}
+	if (player.hp <=0) {
+		var timeSurvived = Date.now() - timeWhenGameStarted;
+		console.log('Time Survived: '+Time);
+		console.log('Best Time: '+bestTime);
+		if (Time > bestTime)
+			bestTime = Time
+		//clear enemy
+		startNewGame();
+	}
+	updatePlayerPosition();
+	drawEntity(player);
+	ctx.fillText(player.hp + " HP",0,30);
+	ctx.fillText('Score: ' + score,300,30);
+	ctx.fillText('Time: ' + Time,150,30);
+}
+startNewGame = function() {
+	player.hp = 10;
+	timeWhenGameStarted = Date.now();
+	frameCount = 0;
+	enemyList = {};
+	upgradeList = {};
+	bulletList = {};
+	Time = 0;
+	score = 0;
+	player.atkspd = 1;
+	brthCount = 1;
+	randomelyGenerateEnemy();
+	randomelyGenerateUpgrade();
+	randomelyGenerateUpgrade();
+}
+randomelyGenerateEnemy = function() {
+	var x = Math.random() * WIDTH;
+	var y = 0;
+	var height = 10 + Math.random() * 30;
+	var width = 10 + Math.random() * 30;
+	var id = Math.random();
+	var spdX = 5 + Math.random() * 5;
+	var spdY = 5 + Math.random() * 5;
+	Enemy(id,x,y,spdX,spdY,width,height);
+}
+randomelyGenerateUpgrade = function() {
+	var x = 10 + Math.random() * WIDTH;
+	var y = 10 + Math.random() * HEIGHT;
+	if (x > WIDTH - player.width)
+		x = WIDTH - player.width;
+	if (y > HEIGHT - player.height)
+		y = HEIGHT - player.height;
+	var height = 10;
+	var width = 10;
+	var id = Math.random();
+	var spdX = 0;
+	var spdY = 0;
+
+	var check = Math.random();
+	if (check < 0.8 && check > 0.7) {
+		var category = 'atkspd';
+		var color = 'purple';
+	}
+	else {
+		var category = 'score';
+		var color = 'orange';
+	}
+
+	Upgrade(id,x,y,spdX,spdY,width,height,category,color);
+}
+randomelyGenerateBullet = function(bulletAngle) {
+	var x = player.x;
+	var y = player.y;
+	var height = 10;
+	var width = 10;
+	var id = Math.random();
+	var angle = bulletAngle;
+	var spdX = Math.cos(angle/180 * Math.PI)*5;
+	var spdY = Math.sin(angle/180 * Math.PI)*5;
+	Bullet(id,x,y,spdX,spdY,width,height);
+}
+randomelyGenerateBlast = function() {
+	var x = player.x;
+	var y = player.y;
+	var height = 10;
+	var width = 10;
+	for(var i=1; i<=12; i++)
+	{
+		var angle = i * 30;
+		var id = Math.random();
+		var spdX = Math.cos(angle/180 * Math.PI)*5;
+		var spdY = Math.sin(angle/180 * Math.PI)*5;
+		Bullet(id,x,y,spdX,spdY,width,height);
+	}
+}
+var running = false;
+var intervalVar;
+document.getElementById("ctx").onmousedown = function(e) {
+  document.getElementById("ctx").focus();
+  if (running) {
+    clearInterval(intervalVar);
+    running = false;
+  }
+  startNewGame();
+  running = true;
+  intervalVar = setInterval(update,40); //40 frames per second
+}
+
+</script>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://www.twitter.com/bijoyandas" target="_blank">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/bijoyan.das" target="_blank">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/bijoyandas" target="_blank">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.quora.com/profile/Bijoyan-Das" target="_blank">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-quora fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; CodeStacK 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="../js/clean-blog.min.js"></script>
+</body>
+</html>
