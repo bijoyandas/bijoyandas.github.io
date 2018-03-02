@@ -258,7 +258,7 @@
   updateSnakePosition = function() {
     ctx.clearRect(0,0,WIDTH,HEIGHT);
     while (foodList.length<3) {
-      foodList.push({x:Math.random()*485+5,y:Math.random()*485+5});
+      foodList.push({x:Math.random()*985+5,y:Math.random()*585+5});
     }
     foodList.forEach(drawFood);
     snakeList1.forEach(drawSnake1);
