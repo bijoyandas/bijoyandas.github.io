@@ -43,8 +43,8 @@
   }
 
   testCollisionSnake = function(snake1,snake2) {
-    return ((Math.abs(snake1.x - snake2.x)<5)
-    && ((Math.abs(snake1.y - snake2.y)<5)));
+    return ((Math.abs(snake1.x - snake2.x)<4)
+    && ((Math.abs(snake1.y - snake2.y)<4)));
   }
 
   drawSnake = function(s,i) {
