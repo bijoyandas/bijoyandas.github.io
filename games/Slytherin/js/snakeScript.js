@@ -208,11 +208,18 @@
 
   isGameOver = function() {
     if (snakeList1.length >= 2*snakeList2.length) {
-      for(i in snakeList2){
-        if (testCollisionSnake(snakeList1[0],snakeList2[i])){
-          clearInterval(intervalVar);
-          ctx.fillText('Blue Snake Wins!',380,300);
-          return;
+      for(i in snakeList1){
+        for(j in snakeList2) {
+          if (testCollisionSnake(snakeList1[i],snakeList2[j])){
+            if (i==0) {
+              clearInterval(intervalVar);
+              ctx.fillText('Blue Snake Wins!',380,300);
+            }
+            else if (j==0){
+              snakeList1.splice(snakeList1.length-1,1);
+            }
+            return;
+          }
         }
       }
     }
@@ -231,11 +238,18 @@
       }
     }
     else if (snakeList2.length >= 2*snakeList1.length) {
-      for(i in snakeList1){
-        if (testCollisionSnake(snakeList2[0],snakeList1[i])){
-          clearInterval(intervalVar);
-          ctx.fillText('Red Snake Wins!',380,300);
-          return;
+      for(i in snakeList2){
+        for(j in snakeList1) {
+          if (testCollisionSnake(snakeList2[i],snakeList1[j])){
+            if (i==0) {
+              clearInterval(intervalVar);
+              ctx.fillText('Red Snake Wins!',380,300);
+            }
+            else if (j==0){
+              snakeList2.splice(snakeList2.length-1,1);
+            }
+            return;
+          }
         }
       }
     }
