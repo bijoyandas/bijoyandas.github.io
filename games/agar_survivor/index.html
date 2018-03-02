@@ -75,7 +75,7 @@
               Press arrow keys (&larr; &rarr; &uarr; &darr;) to fire bullets <br />
               Press 'Space bar' for burst fire (When score >= 500) <br />
               Eat food and powerups to get powerful.<br />
-              <b>Click on the canvas below to start the game</b>
+              <b>Click on the canvas below to start/restart the game</b>
             </h6>
             <hr />
             <canvas id="ctx" height="500" width="500" style="border:1px solid #000000" tabindex=0></canvas>
@@ -96,6 +96,7 @@ var brthCount = 0;
 var Time = 0;
 var bestTime = 0;
 var timeWhenGameStarted = Date.now(); //return the time in milliseconds
+ctx.fillText('Click me to Start the Game',90,200);
 //Player
 var player = {
         x:50,
