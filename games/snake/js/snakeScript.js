@@ -24,6 +24,7 @@
   }
 
   document.onkeydown = function(event) {
+    event.preventDefault();
     if(event.keyCode === 37 && direction!=2)
 		  direction=0;
     else if (event.keyCode == 38 && direction!=3)
