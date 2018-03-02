@@ -75,7 +75,7 @@
         lastSnake = snakeList[i];
       if (direction == 0) {
         if (i==0) {
-          snakeList[i].x = snakeList[i].x - 5;
+          snakeList[i].x = snakeList[i].x - 10;
         }
         else {
           snakeList[i].x = snakeList[i-1].x;
@@ -84,7 +84,7 @@
       }
       if (direction == 1) {
         if (i==0) {
-          snakeList[i].y = snakeList[i].y - 5;
+          snakeList[i].y = snakeList[i].y - 10;
         }
         else {
           snakeList[i].x = snakeList[i-1].x;
@@ -93,7 +93,7 @@
       }
       if (direction == 2) {
         if (i==0) {
-          snakeList[i].x = snakeList[i].x + 5;
+          snakeList[i].x = snakeList[i].x + 10;
         }
         else {
           snakeList[i].x = snakeList[i-1].x;
@@ -102,7 +102,7 @@
       }
       if (direction == 3) {
         if (i==0) {
-          snakeList[i].y = snakeList[i].y + 5;
+          snakeList[i].y = snakeList[i].y + 10;
         }
         else {
           snakeList[i].x = snakeList[i-1].x;
@@ -150,23 +150,23 @@
       foodList = [];
       eaten = true;
       if (direction == 0) {
-        var newX = lastSnake.x-5;
+        var newX = lastSnake.x-10;
         var newY = lastSnake.y;
         snakeList.unshift({x:newX,y:newY});
         }
       if (direction == 1) {
         var newX = lastSnake.x;
-        var newY = lastSnake.y-5;
+        var newY = lastSnake.y-10;
         snakeList.unshift({x:newX,y:newY});
       }
       if (direction == 2) {
-        var newX = lastSnake.x+5;
+        var newX = lastSnake.x+10;
         var newY = lastSnake.y;
         snakeList.unshift({x:newX,y:newY});
       }
       if (direction == 3) {
         var newX = lastSnake.x;
-        var newY = lastSnake.y+5;
+        var newY = lastSnake.y+10;
         snakeList.unshift({x:newX,y:newY});
       }
     }
@@ -182,6 +182,6 @@
     snakeList = [{x:220,y:200},{x:210,y:200},{x:200,y:200}];
     foodList = [];
     direction = 99;
-    intervalVar = setInterval(updateSnakePosition,40);
+    intervalVar = setInterval(updateSnakePosition,50);
   }
   //drawFood(food);
