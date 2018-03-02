@@ -6,16 +6,16 @@
   var score,eaten,lastSnake,snakeList,foodList,direction;
   var intervalVar;
   var snake = {
-    height:10,
-    width:10,
+    height:20,
+    width:20,
     color:'blue'
   };
 
   var food = {
     x:100,
     y:100,
-    height:10,
-    width:10,
+    height:20,
+    width:20,
     color:'orange'
   };
 
