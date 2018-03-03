@@ -18,9 +18,14 @@
     width:20,
     color:'orange'
   };
-
+  var running = false;
   document.getElementById('ctx').onmousedown = function() {
+    if (running) {
+      clearInterval(intervalVar);
+      running = false;
+    }
     startGame();
+    running = true;
   }
 
   document.onkeydown = function(event) {
