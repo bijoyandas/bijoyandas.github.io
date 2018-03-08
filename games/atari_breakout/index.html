@@ -78,7 +78,7 @@
         </div>
       </div>
 <script type="text/javascript">
-var ctx = document.getElementById('ctx').getContext('2d');
+  var ctx = document.getElementById('ctx').getContext('2d');
       var WIDTH = 500;
       var HEIGHT = 500;
       var numOfEnemies,enemyList,score,intervalVar,running;
@@ -209,6 +209,7 @@ var ctx = document.getElementById('ctx').getContext('2d');
       isGameOver = function() {
         if (base.lives <= 0 || score == 330) {
           clearInterval(intervalVar);
+          running = false;
         }
       }
 
@@ -245,6 +246,7 @@ var ctx = document.getElementById('ctx').getContext('2d');
         var enemyX = 5;
         var enemyY = 5;
         score = 0;
+        base.lives = 3;
         enemyList = []; //5+40 = 45
         running = true;
         for (var i=1;i<=6;i++) {
