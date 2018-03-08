@@ -207,7 +207,7 @@
       }
 
       isGameOver = function() {
-        if (base.lives <= 0 || score == 330) {
+        if (base.lives < 0 || score == 330) {
           clearInterval(intervalVar);
           running = false;
         }
