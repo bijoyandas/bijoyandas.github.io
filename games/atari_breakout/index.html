@@ -79,217 +79,185 @@
       </div>
 <script type="text/javascript">
 var ctx = document.getElementById('ctx').getContext('2d');
-ctx.font = '30px Calibri';
-var WIDTH = 500;
-var HEIGHT = 500;
-var score = 0;
-ctx.fillText('Click me to Start the Game',90,200);
-var numOfEnemy = 0;
-var player = {
-	x:0,
-	y:400,
-	spdx:30,
-	spdY:0,
-	height:20,
-	width:100,
-	color:'blue',
-	pressingLeft:false,
-	pressingRight:false,
-	lives:3,
-};
-var ball = {
-	x:0,
-	y:0,
-	spdX:-5,
-	spdY:-5,
-	width:10,
-	height:10,
-	color:'green',
-};
-var enemyList = {};
-document.onkeydown = function(event)
-{
-  event.preventDefault();
-	if (event.keyCode === 37) {
-		player.pressingLeft = true;
-	}
-	else if (event.keyCode === 39) {
-		player.pressingRight = true;
-	}
-}
-Enemy = function(width,height,x,y)
-{
-	var enemy = {};
-	enemy.width = width;
-	enemy.height = height;
-	enemy.x = x;
-	enemy.y = y;
-	enemy.color = 'orange';
-	enemy.id = numOfEnemy++;
-	enemy.exists = true;
-	enemyList[enemy.id] = enemy;
-}
-document.onkeyup = function(event)
-{
-  event.preventDefault();
-	if (event.keyCode === 37)
-		player.pressingLeft = false;
-	else if (event.keyCode == 39)
-		player.pressingRight = false;
-}
-drawBar = function()
-{
-	ctx.save();
-	ctx.fillStyle = player.color;
-	ctx.fillRect(player.x-player.width/2,player.y-player.height/2,player.width,player.height);
-	ctx.restore();
-}
-updateBarPosition = function()
-{
-	if (player.pressingLeft)
-		player.x -= 10;
-	else if (player.pressingRight)
-		player.x += 10;
+      var WIDTH = 500;
+      var HEIGHT = 500;
+      var numOfEnemies,enemyList,score,intervalVar,running;
+      ctx.font = '20px Calibri';
+      ctx.fillText("Click me to start the game",150,250);
 
-	if (player.x > WIDTH - player.width/2)
-		player.x = WIDTH - player.width/2;
-	if (player.x < player.width/2)
-		player.x = player.width/2;
-}
-updateBar = function()
-{
-	updateBarPosition();
-	drawBar();
-}
-drawEnemy = function(something)
-{
-	ctx.save();
-	ctx.fillStyle = something.color;
-	ctx.fillRect(something.x,something.y,something.width,something.height);
-	ctx.restore();
-}
-drawBall = function(something)
-{
-	ctx.save();
-	ctx.fillStyle = something.color;
-	ctx.fillRect(something.x,something.y,something.width,something.height);
-	ctx.restore();
-}
-updateBall = function(something)
-{
-	something.x += something.spdX;
-	something.y += something.spdY;
-	if (something.x > WIDTH || something.x < 0)
-	{
-		something.spdX = -something.spdX;
-	}
-	if (something.y < 0)
-	{
-		something.spdY = -something.spdY;
-	}
-	if (something.y > HEIGHT)
-	{
-		player.lives--;
-		something.spdY = -something.spdY;
-		if (player.lives < 1) {
-			gameOver();
-		}
-	}
-}
-testCollisionRect = function(rect1,rect2)
-{
-	return ((rect1.x - rect1.width/2 <= rect2.x + rect2.width)
-			&& (rect2.x <= rect1.x - rect1.width/2 + rect1.width)
-			&& (rect1.y <= rect2.y + rect2.height)
-			&& (rect2.y <= rect1.y + rect1.height));
-}
-testCollisionEntity = function(entity1,entity2) {
-	var rect1 = {};
-		rect1.x=entity1.x;
-		rect1.y=entity1.y;
-		rect1.width=entity1.width;
-		rect1.height=entity1.height;
-	var rect2 = {};
-		rect2.x=entity2.x-entity2.width/2;
-		rect2.y=entity2.y-entity2.height/2;
-		rect2.width=entity2.width;
-		rect2.height=entity2.height;
-		return testCollisionRect(rect1,rect2);
-}
-startNewGame = function()
-{
-	var width = 48;
-	var height = 30;
-	var y = 2;
-	var x = 1;
-	length = 0;
-	numOfEnemy = 0;
-	ball.x = player.x;
-	player.lives = 3;
-	ball.y = 300;
-	player.spdX = -5;
-	player.spdY = -5;
-	score = 0;
-	for(var i=1;i<=70;i++,x = x + width + 2)
-	{
-		if (i % 10 === 1 && i != 1) {
-			x = 1;
-			y = y + height + 2;
-		}
-		Enemy(width,height,x,y);
-	}
-}
-gameOver = function()
-{
-	enemyList = {};
-	console.log('Score: '+score);
-	startNewGame();
-}
+      var ball = {
+        x:0,
+        y:0,
+        radius:5,
+        color:'blue',
+        spdX:-5,
+        spdY:-5
+      };
 
-update = function()
-{
-	ctx.clearRect(0,0,WIDTH,HEIGHT);
-	updateBall(ball);
-	drawBall(ball);
-	for (var key in enemyList)
-	{
-		drawEnemy(enemyList[key]);
-	}
-	var isCollision = testCollisionEntity(player,ball);
-	if (isCollision)
-	{
-		ball.spdY = -ball.spdY;
-	}
-	for(var key in enemyList)
-	{
-		var isColl = testCollisionEntity(enemyList[key],ball);
-		if (isColl)
-		{
-			delete enemyList[key];
-			score += 5;
-			ball.spdY = -ball.spdY;
-		}
-	}
+      var base = {
+        x:0,
+        y:400,
+        height:20,
+        width:100,
+        color:'red',
+        pressingLeft:false,
+        pressingRight:false,
+        lives:3
+      };
 
-	if (score === 350){
-			gameOver();
-			}
-	updateBar();
-	ctx.fillText('Score: '+score,10,470);
-	ctx.fillText('Lives: '+player.lives,400,470);
-}
-var running = false;
-var intervalVar;
-document.getElementById("ctx").onmousedown = function(e) {
-  if (running) {
-    clearInterval(intervalVar);
-    running = false;
-  }
-  startNewGame();
-  running = true;
-  intervalVar = setInterval(update,25); //40 frames per second
-}
+      var enemy = {
+        height:20,
+        width:40,
+        color:'orange'
+      };
 
+      running = false;
+      document.getElementById('ctx').onmousedown = function() {
+        if (running) {
+          clearInterval(intervalVar);
+        }
+        startGame();
+      }
+
+      document.onkeydown = function(event) {
+        if (event.keyCode == 37) {
+          base.pressingLeft = true;
+          base.pressingRight = false;
+        }
+        else if (event.keyCode == 39) {
+          base.pressingLeft = false;
+          base.pressingRight = true;
+        }
+      }
+
+      document.onkeyup = function(event) {
+        if (event.keyCode == 37) {
+          base.pressingLeft = false;
+        }
+        else if (event.keyCode == 39) {
+          base.pressingRight = false;
+        }
+      }
+
+      testCollision = function(base,ball) {
+        return ((base.x < ball.x + ball.radius) &&
+                (ball.x < base.x + base.width) &&
+                (base.y < ball.y + ball.radius) &&
+                (ball.y < base.y + base.height));
+      }
+
+      testCollisionEnemy = function(e,ball) {
+        return ((e.x < ball.x + ball.radius) &&
+                (ball.x < e.x + enemy.width) &&
+                (e.y < ball.y + ball.radius) &&
+                (ball.y < e.y + enemy.height));
+      }
+
+      drawBall = function() {
+        ctx.save();
+        ctx.fillStyle = ball.color;
+        ctx.beginPath();
+        ctx.arc(ball.x,ball.y,ball.radius,0,2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      drawBase = function() {
+        ctx.save();
+        ctx.fillStyle = base.color;
+        ctx.fillRect(base.x,base.y,base.width,base.height);
+        ctx.restore();
+      }
+
+      drawEnemy = function(e,i) {
+        ctx.save();
+        ctx.fillStyle = enemy.color;
+        ctx.fillRect(e.x,e.y,enemy.width,enemy.height);
+        ctx.restore();
+      }
+
+      updateBarPosition = function() {
+        if (base.pressingLeft) {
+          base.x = base.x - 5;
+        }
+        else if (base.pressingRight) {
+          base.x = base.x + 5;
+        }
+        if (base.x < 0) {
+          base.x = 0;
+        }
+        if (base.x > WIDTH-base.width) {
+          base.x = WIDTH-base.width;
+        }
+      }
+
+      updateBallPosition = function() {
+        ball.x += ball.spdX;
+        ball.y += ball.spdY;
+        if (ball.x > WIDTH || ball.x < 0) {
+          ball.spdX = -ball.spdX;
+        }
+        if (ball.y < 0) {
+          ball.spdY = -ball.spdY;
+        }
+        if (ball.y > HEIGHT ) {
+          ball.spdY = -ball.spdY;
+          base.lives--;
+        }
+      }
+
+      isGameOver = function() {
+        if (base.lives <= 0 || score == 330) {
+          clearInterval(intervalVar);
+        }
+      }
+
+      update = function() {
+        ctx.clearRect(0,0,WIDTH,HEIGHT);
+        enemyList.forEach(drawEnemy);
+        drawBall();
+        drawBase();
+
+        if (testCollision(base,ball)) {
+          ball.spdY = -ball.spdY;
+        }
+
+        for (key in enemyList) {
+          if (testCollisionEnemy(enemyList[key],ball)) {
+            delete enemyList[key];
+            ball.spdY = -ball.spdY;
+            score += 5;
+          }
+        }
+
+        ctx.fillText("Score: "+score,5,490);
+        ctx.fillText("Lives: "+base.lives,430,490);
+        isGameOver();
+        updateBarPosition();
+        updateBallPosition();
+      }
+
+      startGame = function() {
+        base.x = 150;
+        ball.x = base.x + 100;
+        ball.y = base.y - 100;
+        numOfEnemies = 0;
+        var enemyX = 5;
+        var enemyY = 5;
+        score = 0;
+        enemyList = []; //5+40 = 45
+        running = true;
+        for (var i=1;i<=6;i++) {
+          enemyX = 5;
+          for(var j=1;j<=11;j++) {
+            enemyList[numOfEnemies] = {x:enemyX,y:enemyY};
+            numOfEnemies++;
+            enemyX += 45;
+          }
+          enemyY += 25;
+        }
+        intervalVar = setInterval(update,20);
+      }
 </script>
 
     <!-- Footer -->
